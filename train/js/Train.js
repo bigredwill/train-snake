@@ -1,5 +1,6 @@
 function Train(x, y, carNum) {
     this.direction = 'Up';
+    this.stopped = false;
     this.x = x;
     this.y = y;
     this.first = true;
@@ -30,7 +31,8 @@ Train.prototype.addCar = function() {
     } else {
         x = this.tail.x - this.tail.width * (this.tail.vx);
         y = this.tail.y - this.tail.height * (this.tail.vy);
-        col = 'rgba(200,40,80,1)';
+        // col = 'rgba(200,40,80,1)';
+        col = 'rgba(255,0,0,1)';
         direction = this.tail.direction;
         carNumber = this.tail.carNumber + 1;
         newCar = new TrainCar(this.tail, x, y, direction, carNumber, col);
@@ -62,9 +64,11 @@ Train.prototype.setDirection = function(dir) {
 };
 
 Train.prototype.stopTrain = function() {
+    this.stopped = true;
     this.head.stopCar();
 };
 Train.prototype.resumeTrain = function() {
+    this.stopped = false;
     this.head.resumeCar();
 };
 

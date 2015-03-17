@@ -17,7 +17,11 @@ function TrainCar(previous, x, y, direction, number, color) {
     this.width = 10;
     this.height = 20;
     
-    
+    this.fixtureDef = new Box2D.b2FixtureDef();
+    this.fixtureDef.density = 0;
+    this.fixtureDef.friction = 1;
+    this.fixtureDef.shape = new Box2D.b2PolygonShape();
+    this.fixtureDef.shape.SetAsBox(this.width, this.height);
 
     this.stopped = false;
     this.lastTurn = 0;
@@ -29,7 +33,7 @@ function TrainCar(previous, x, y, direction, number, color) {
     // this.shape.regX = this.width / 2;
     this.shape.x = x;
     this.shape.y = y;
-    stage.addChild(this.shape);
+    SNAKE.stage.addChild(this.shape);
 
     this.setDirection({move:this.direction});
 }
@@ -77,15 +81,15 @@ TrainCar.prototype.update = function(dt) {
         
         this.move();
 
-        if (this.x > stage.canvas.width) {
+        if (this.x > SNAKE.stage.canvas.width) {
             this.x = 0;
         } else if (this.x < 0) {
-            this.x = stage.canvas.width;
+            this.x = SNAKE.stage.canvas.width;
         }
-        if (this.y > stage.canvas.height) {
+        if (this.y > SNAKE.stage.canvas.height) {
             this.y = 0;
         } else if (this.y < 0) {
-            this.y = stage.canvas.height;
+            this.y = SNAKE.stage.canvas.height;
         }
         this.shape.y = this.y += this.vy * this.speed;
         this.shape.x = this.x += this.vx * this.speed;
@@ -114,6 +118,8 @@ TrainCar.prototype.setDirection = function(dir) {
                 this.y -= (this.height/2); //smoother turning
             } else if (this.direction === "Right"){
                 this.x -= (this.height/2);
+            } else if (this.direction === "Down") {
+                break;
             }
             this.direction = "Up";
             this.vx = 0;
@@ -126,6 +132,8 @@ TrainCar.prototype.setDirection = function(dir) {
                 this.x += (this.height/2); //smoother turning
             } else if (this.direction === "Down"){
                 this.y -= (this.height/2);
+            } else if (this.direction === "Left") {
+                break;
             }
             this.direction = "Right";
             this.vx = 1;
@@ -138,6 +146,8 @@ TrainCar.prototype.setDirection = function(dir) {
                 this.y += (this.height/2); //smoother turning
             } else if (this.direction === "Left") {
                 this.x += (this.height/2);
+            } else if (this.direction === "Up") {
+                break;
             }
             this.direction = "Down";
             this.vx = 0;
@@ -150,6 +160,8 @@ TrainCar.prototype.setDirection = function(dir) {
                 this.x -= (this.height/2); //smoother turning
             } else if (this.direction === "Up"){
                 this.y += (this.height/2);
+            } else if (this.direction === "Right") {
+                break;
             }
             this.direction = "Left";
             this.vx = -1;
@@ -158,6 +170,6 @@ TrainCar.prototype.setDirection = function(dir) {
             break;
 
         default:
-            console.log("Not a direction: " + dir);
+            // console.log("Not a direction: " + dir);
     }
 };

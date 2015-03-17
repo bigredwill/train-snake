@@ -31,14 +31,14 @@ function Passenger(x, y) {
     this.bBox.graphics.s("#FA0").ss(3).dr(0, 0, this.width / 2, this.height / 2).es();
     this.bBox.x = x;
     this.bBox.y = y;
-    stage.addChild(this.bBox);
+    SNAKE.stage.addChild(this.bBox);
 
     this.spriteSheet = new createjs.SpriteSheet(this.data);
     this.sprite = new createjs.Sprite(this.spriteSheet, "neutral");
     this.sprite.x = x;
     this.sprite.y = y;
     this.sprite.scaleX = this.sprite.scaleY = 0.5;
-    stage.addChild(this.sprite);
+    SNAKE.stage.addChild(this.sprite);
 }
 Passenger.prototype.isContact = function() {
 
@@ -56,5 +56,5 @@ Passenger.prototype.update = function() {
 };
 
 Passenger.prototype.destroy = function() {
-    stage.removeChild(this.sprite);
+    SNAKE.stage.removeChild(this.sprite);
 };

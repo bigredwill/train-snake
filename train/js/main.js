@@ -13,9 +13,13 @@
 */
 
 var lastTick = Date.now();
-var canvas, game, stage,
+var canvas, game,
     STAGEWIDTH = 500,
     STAGEHEIGHT = 400;
+
+this.SNAKE = this.SNAKE || {};
+
+game = new Game();
 
 function Game() {
     var hold = document.getElementById('game_is_inside');
@@ -23,7 +27,10 @@ function Game() {
     this.canvas = document.getElementById('canvas');
     this.canvas.style.backgroundColor = 'rgb(10,10,50)';
     this.canvas.style.position = 'absolute';
-    stage = new createjs.Stage(this.canvas);
+    SNAKE.stage = new createjs.Stage(this.canvas);
+
+    var gravity = new Box2D.b2Vec2(0.0, -10.0);
+    SNAKE.world = new Box2D.b2World(gravity);
 
     this.ctx = this.canvas.getContext('2d');
 
@@ -83,7 +90,6 @@ Game.prototype.checkAheadCollision = function() {
                 y2 = y1 + clipW;
                 break;
             case "Left":
-                console.log("LEFT");
                 x1 = player.head.x - clipH;
                 y1 = player.head.y - player.head.width;
                 x2 = player.head.x;
@@ -94,14 +100,21 @@ Game.prototype.checkAheadCollision = function() {
         }
         
         clrSquare = this.ctx.getImageData(x1, y1, x2-x1, y2-y1);
-
+        var d = clrSquare.data;
         for(var i = 0; i < clipL * 4; i += 4) {
-            console.log(clrSquare.data[i] + "\t" + clrSquare.data[i+1] + "\t" + clrSquare.data[i+2] + "\t" + clrSquare.data[i+3]);
-
+            // console.log(clrSquare.data[i] + "\t" + clrSquare.data[i+1] + "\t" + clrSquare.data[i+2] + "\t" + clrSquare.data[i+3]);
+            if(d[i] === 255 && d[i+1] === 0 && d[i+2] === 0 && d[i+3] === 255) {
+                this.player.stopTrain();
+                console.log("Self Collision");
+            }
+            if(d[i] === 0 && d[i+1] === 255 && d[i+2] === 0 && d[i+3] === 255) {
+                this.player.stopTrain();
+                console.log("Self Collision");
+            }
         }
-        this.shape = new createjs.Shape();
-        this.shape.graphics.beginFill('rgba(250,40,80,0.2)').dr(x1, y1, x2-x1, y2-y1).ef();
-        stage.addChild(this.shape);
+        // this.shape = new createjs.Shape();
+        // this.shape.graphics.beginFill('rgba(250,40,80,0.2)').dr(x1, y1, x2-x1, y2-y1).ef();
+        // SNAKE.stage.addChild(this.shape);
         // this.player.stopTrain();
 };
 
@@ -112,12 +125,14 @@ Game.prototype.update = function() {
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].update(dt);
     }
-    
-    stage.update();
+    if(!this.player.stopped) {
+        this.checkAheadCollision();
+    }
+    SNAKE.stage.update();
 };
 
 Game.prototype.keyDown = function(key) {
-    this.checkAheadCollision();
+    // this.checkAheadCollision();
     for (var i = 0; i < this.entities.length; i++) {
         if (this.entities[i].keyDown) {
             this.entities[i].keyDown(key.keyIdentifier);
@@ -135,8 +150,4 @@ Game.prototype.keyUp = function(key) {
 
 Game.isCollide = function(a, b) {
     return !(((a.y + a.height) < (b.y)) || (a.y > (b.y + b.height)) || ((a.x + a.width) < b.x) || (a.x > (b.x + b.width)));
-};
-
-window.onload = function() {
-    game = new Game();
 };
