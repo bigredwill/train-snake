@@ -110,6 +110,11 @@ TrainCar.prototype.setDirection = function(dir) {
     switch (dir.move) {
 
         case "Up":
+            if(this.direction === "Left") {
+                this.y -= (this.height/2); //smoother turning
+            } else if (this.direction === "Right"){
+                this.x -= (this.height/2);
+            }
             this.direction = "Up";
             this.vx = 0;
             this.vy = -1;
@@ -117,6 +122,11 @@ TrainCar.prototype.setDirection = function(dir) {
             break;
 
         case "Right":
+            if(this.direction === "Up") {
+                this.x += (this.height/2); //smoother turning
+            } else if (this.direction === "Down"){
+                this.y -= (this.height/2);
+            }
             this.direction = "Right";
             this.vx = 1;
             this.vy = 0;
@@ -124,8 +134,10 @@ TrainCar.prototype.setDirection = function(dir) {
             break;
 
         case "Down":
-            if(this.direction === "Down") {
-                this.x -= (this.height/2); //smoother turning
+            if(this.direction === "Right") {
+                this.y += (this.height/2); //smoother turning
+            } else if (this.direction === "Left") {
+                this.x += (this.height/2);
             }
             this.direction = "Down";
             this.vx = 0;
@@ -136,6 +148,8 @@ TrainCar.prototype.setDirection = function(dir) {
         case "Left":
             if(this.direction === "Down") {
                 this.x -= (this.height/2); //smoother turning
+            } else if (this.direction === "Up"){
+                this.y += (this.height/2);
             }
             this.direction = "Left";
             this.vx = -1;
